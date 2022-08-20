@@ -30,9 +30,10 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: 18.x # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+        node-version: 18 # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
         cache: 'npm'
     
+    - run: npm ci
     - run: node download-game-data.mjs
 
     # TODO: Build the rest of the website
