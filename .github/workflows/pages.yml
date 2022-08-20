@@ -17,10 +17,6 @@ concurrency:
   group: "pages"
   cancel-in-progress: true
 
-env:
-  CLIENT_ID: ${{ secrets.CLIENT_ID }}
-  CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -38,7 +34,11 @@ jobs:
         cache: 'npm'
     
     - run: npm ci
-    - run: node download-game-data.mjs
+    - name: Download Game Data
+      env:
+        CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+      run: CLIENT_ID="$CLIENT_ID" CLIENT_SECRET="$CLIENT_SECRET" node download-game-data.mjs
 
     # TODO: Build the rest of the website
 
