@@ -5,6 +5,8 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  schedule:
+    - cron: '0 0 1 * *' # Run first day of each month to update data
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
