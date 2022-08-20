@@ -12,12 +12,13 @@ oneYearAgo.subtract(3, 'days');
 oneMonthLater.add(3, 'days');
 
 // Log
-console.log(oneYearAgo.format());
-console.log(oneMonthLater.format());
+console.log(`Downloading games data from ${oneYearAgo.format()} to ${oneMonthLater.format()}`);
 
 const clientID = process.env.CLIENT_ID;
 const clientSecret = process.env.CLIENT_SECRET;
 const pageSize = 500;
+const outputFolder = "public/data";
+
 
 try {
     console.log("Authenticating...");
@@ -58,14 +59,14 @@ try {
     console.log("Done grouping.");
 
     console.log("Writing files...");
-    fs.mkdirSync('games', { recursive: true });
+    fs.mkdirSync(outputFolder, { recursive: true });
     for (let unixTime in groupedGames) {
         const group = groupedGames[unixTime];
         const date = moment(parseInt(unixTime) * 1000).format("YYYY-MM-DD");
 
         console.log(`...${date}...`);
 
-        fs.writeFileSync(`games/${date}.json`, JSON.stringify(group, null, 2));
+        fs.writeFileSync(`${outputFolder}/${date}.json`, JSON.stringify(group, null, 2));
     }
     console.log("Done writing files.");
 }
