@@ -1,12 +1,18 @@
 {
   "dependencies": {
     "axios": "^0.27.2",
+    "elm": "^0.19.1-5",
     "lodash": "^4.17.21",
     "moment": "^2.29.4"
   },
+  "devDependencies": {
+    "elm-format": "^0.8.5",
+    "elm-live": "^4.0.2"
+  },
   "scripts": {
     "download-game-data": "node download-game-data.mjs",
-    "build-elm": "echo TODO",
-    "build": "npm run download-game-data && npm run build-elm"
+    "build-elm": "cp src/index.html public && elm make src/Main.elm --output=public/elm.js --optimize",
+    "build": "npm run download-game-data && npm run build-elm",
+    "serve": "elm-live src/Main.elm --open --hot --dir=src --start-page=index.html -- --output=src/elm.js --debug"
   }
 }
