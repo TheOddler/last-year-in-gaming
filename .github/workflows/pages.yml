@@ -40,9 +40,8 @@ jobs:
       env:
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
         CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-      run: node download-game-data.mjs
 
-    # TODO: Build the rest of the website
+      run: npm run build
 
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v1
