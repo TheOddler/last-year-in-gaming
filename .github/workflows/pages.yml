@@ -38,7 +38,7 @@ jobs:
       env:
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
         CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-      run: CLIENT_ID="$CLIENT_ID" CLIENT_SECRET="$CLIENT_SECRET" node download-game-data.mjs
+      run: CLIENT_ID=$CLIENT_ID CLIENT_SECRET=$CLIENT_SECRET node download-game-data.mjs
 
     # TODO: Build the rest of the website
 
