@@ -17,6 +17,10 @@ concurrency:
   group: "pages"
   cancel-in-progress: true
 
+env:
+  CLIENT_ID: ${{ secrets.CLIENT_ID }}
+  CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
