@@ -31,7 +31,7 @@ try {
     console.log("Authenticated.");
 
     let page = 0;
-    const games = [];
+    let games = [];
 
     console.log(`Downloading games...`);
     while (true) {
@@ -44,7 +44,7 @@ try {
                 'Client-ID': clientID,
                 'Authorization': `Bearer ${accessToken}`,
             },
-            data: `fields name,first_release_date,summary,url,total_rating,rating; where first_release_date >= ${oneYearAgo.unix()} & first_release_date <= ${oneMonthLater.unix()}; limit ${pageSize}; offset ${pageSize * page}; sort first_release_date asc;`
+            data: `fields name,first_release_date,summary,url,total_rating,rating,cover.url; where first_release_date >= ${oneYearAgo.unix()} & first_release_date <= ${oneMonthLater.unix()}; limit ${pageSize}; offset ${pageSize * page}; sort first_release_date asc;`
         });
         games.push(...gamesResponse.data);
 
@@ -54,14 +54,28 @@ try {
     }
     console.log(`Downloaded ${page} page(s). Found ${games.length} games.`);
 
+
+    console.log("Mapping data...")
+    games = _.map(games, game => {
+        return {
+            name: game.name,
+            summary: game.summary,
+            cover_url: game.cover?.url,
+            url: game.url,
+            release_date: game.first_release_date
+        };
+    });
+    console.log("Done mapping data.")
+
+
     console.log("Grouping games by release date...");
-    const groupedGames = _.groupBy(games, 'first_release_date');
+    games = _.groupBy(games, 'release_date');
     console.log("Done grouping.");
 
     console.log("Writing files...");
     fs.mkdirSync(outputFolder, { recursive: true });
-    for (let unixTime in groupedGames) {
-        const group = groupedGames[unixTime];
+    for (let unixTime in games) {
+        const group = games[unixTime];
         const date = moment(parseInt(unixTime) * 1000).format("YYYY-MM-DD");
 
         console.log(`...${date}...`);

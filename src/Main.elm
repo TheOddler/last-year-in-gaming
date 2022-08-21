@@ -1,64 +1,114 @@
 module Main exposing (..)
 
--- Press buttons to increment and decrement a counter.
---
--- Read how it works:
---   https://guide.elm-lang.org/architecture/buttons.html
---
-
 import Browser
-import Html exposing (Html, button, div, text)
-import Html.Events exposing (onClick)
+import Date exposing (Date)
+import Game exposing (Game)
+import Html exposing (Html, div, h1, text)
+import Http
+import Json.Decode as Decode
+import Task
 
 
-
--- MAIN
-
-
-main =
-    Browser.sandbox { init = init, update = update, view = view }
-
-
-
--- MODEL
-
-
-type alias Model =
-    Int
-
-
-init : Model
-init =
-    0
-
-
-
--- UPDATE
+type Model
+    = Loading
+    | Done (List Game)
+    | Error String String
 
 
 type Msg
-    = Increment
-    | Decrement
+    = SetDate Date
+    | SetGames (Result Http.Error String)
 
 
-update : Msg -> Model -> Model
-update msg model =
+main : Program () Model Msg
+main =
+    Browser.element
+        { init = init
+        , update = update
+        , subscriptions = subscriptions
+        , view = view
+        }
+
+
+init : () -> ( Model, Cmd Msg )
+init _ =
+    ( Loading
+    , Cmd.batch
+        [ Task.perform SetDate Date.getTodayLastYear
+        ]
+    )
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg _ =
     case msg of
-        Increment ->
-            model + 1
+        SetDate date ->
+            ( Loading
+            , Http.get
+                { url = "data/" ++ Date.toString date ++ ".json"
+                , expect = Http.expectString SetGames
+                }
+            )
 
-        Decrement ->
-            model - 1
+        SetGames errorOrJson ->
+            case errorOrJson of
+                Err err ->
+                    ( Error "Failed getting games" <| httpErrorToString err, Cmd.none )
+
+                Ok json ->
+                    case Decode.decodeString (Decode.list Game.decoder) json of
+                        Err err ->
+                            ( Error "Failed decoding games" <| decodeErrorToString err, Cmd.none )
+
+                        Ok games ->
+                            ( Done games, Cmd.none )
 
 
-
--- VIEW
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.none
 
 
 view : Model -> Html Msg
 view model =
-    div []
-        [ button [ onClick Decrement ] [ text "-" ]
-        , div [] [ text (String.fromInt model) ]
-        , button [ onClick Increment ] [ text "+" ]
-        ]
+    case model of
+        Loading ->
+            div [] [ text "Loading" ]
+
+        Done games ->
+            div []
+                [ h1 []
+                    [ text <| "Games release exactly one year ago:"
+                    ]
+                , div
+                    []
+                  <|
+                    List.map Game.view games
+                ]
+
+        Error title message ->
+            div [] [ text title, text message ]
+
+
+httpErrorToString : Http.Error -> String
+httpErrorToString error =
+    case error of
+        Http.BadUrl url ->
+            "Bad url: " ++ url
+
+        Http.Timeout ->
+            "Timeout"
+
+        Http.NetworkError ->
+            "Network error"
+
+        Http.BadStatus status ->
+            "Bad status: " ++ String.fromInt status
+
+        Http.BadBody body ->
+            "Bad body: " ++ body
+
+
+decodeErrorToString : Decode.Error -> String
+decodeErrorToString _ =
+    "todo"
