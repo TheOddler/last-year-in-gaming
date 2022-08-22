@@ -44,7 +44,7 @@ try {
                 'Client-ID': clientID,
                 'Authorization': `Bearer ${accessToken}`,
             },
-            data: `fields name,first_release_date,summary,url,total_rating,rating,cover.url; where first_release_date >= ${oneYearAgo.unix()} & first_release_date <= ${oneMonthLater.unix()}; limit ${pageSize}; offset ${pageSize * page}; sort first_release_date asc;`
+            data: `fields name,first_release_date,summary,url,total_rating,rating,cover.image_id,websites.url,websites.trusted,websites.category; where first_release_date >= ${oneYearAgo.unix()} & first_release_date <= ${oneMonthLater.unix()}; limit ${pageSize}; offset ${pageSize * page}; sort first_release_date asc;`
         });
         games.push(...gamesResponse.data);
 
@@ -57,12 +57,30 @@ try {
 
     console.log("Mapping data...")
     games = _.map(games, game => {
+
+        game.websites = _.filter(game.websites, website => website.trusted); // Only accept trusted websites
+        // Category enum: https://api-docs.igdb.com/#website-enums
+        const officialUrl = _.find(game.websites, website => website.category == 1 /*1 = official*/)?.url;
+        const steam = _.find(game.websites, website => website.category == 13 /*13 = steam*/)?.url;
+        const itch = _.find(game.websites, website => website.category == 15 /*15 = itch*/)?.url;
+        const epicGames = _.find(game.websites, website => website.category == 16 /*16 = epicgames*/)?.url;
+        const gog = _.find(game.websites, website => website.category == 17 /*17 = gog*/)?.url;
+
+        if (officialUrl) { console.log(officialUrl); }
+
         return {
             name: game.name,
-            summary: game.summary,
-            cover_url: game.cover?.url,
-            url: game.url,
-            release_date: game.first_release_date
+            description: game.summary,
+            cover: game.cover?.image_id
+                ? `https://images.igdb.com/igdb/image/upload/t_cover_big_2x/${game.cover.image_id}.jpg`
+                : null,
+            url: officialUrl,
+            itch: itch,
+            steam: steam,
+            gog: gog,
+            epic_games: epicGames,
+            igdb: game.url,
+            release_date: moment(parseInt(game.first_release_date) * 1000).format("YYYY-MM-DD")
         };
     });
     console.log("Done mapping data.")
@@ -74,9 +92,8 @@ try {
 
     console.log("Writing files...");
     fs.mkdirSync(outputFolder, { recursive: true });
-    for (let unixTime in games) {
-        const group = games[unixTime];
-        const date = moment(parseInt(unixTime) * 1000).format("YYYY-MM-DD");
+    for (let date in games) {
+        const group = games[date];
 
         console.log(`...${date}...`);
 
