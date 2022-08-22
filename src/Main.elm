@@ -2,6 +2,7 @@ module Main exposing (..)
 
 import Browser
 import Date exposing (Date)
+import DecodeExtra
 import Game exposing (Game)
 import Html exposing (Html, div, h1, text)
 import Http
@@ -56,7 +57,7 @@ update msg _ =
                     ( Error "Failed getting games" <| httpErrorToString err, Cmd.none )
 
                 Ok json ->
-                    case Decode.decodeString (Decode.list Game.decoder) json of
+                    case Decode.decodeString (DecodeExtra.listSafe Game.decoder) json of
                         Err err ->
                             ( Error "Failed decoding games" <| decodeErrorToString err, Cmd.none )
 
