@@ -59,7 +59,7 @@ update msg _ =
                 Ok json ->
                     case Decode.decodeString (DecodeExtra.listSafe Game.decoder) json of
                         Err err ->
-                            ( Error "Failed decoding games" <| decodeErrorToString err, Cmd.none )
+                            ( Error "Failed decoding games" <| Decode.errorToString err, Cmd.none )
 
                         Ok games ->
                             ( Done games, Cmd.none )
@@ -108,8 +108,3 @@ httpErrorToString error =
 
         Http.BadBody body ->
             "Bad body: " ++ body
-
-
-decodeErrorToString : Decode.Error -> String
-decodeErrorToString _ =
-    "todo"
