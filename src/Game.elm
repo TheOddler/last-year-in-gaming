@@ -45,20 +45,30 @@ view game =
             Maybe.map
                 (\u -> a [ href u, class "url" ] [ text label ])
                 maybeUrl
+
+        maybeCover =
+            Maybe.map (\s -> img [ src s, class "cover" ] []) game.cover
+
+        info =
+            values
+                [ Just <| div [ class "name" ] [ text game.name ]
+                , Maybe.map (\t -> div [ class "description" ] [ text t ]) game.description
+                , Just <|
+                    div [ class "urls" ] <|
+                        values
+                            [ viewGameUrl "Official Website" game.url
+                            , viewGameUrl "itch.io" game.itch
+                            , viewGameUrl "Steam" game.steam
+                            , viewGameUrl "GOG" game.gog
+                            , viewGameUrl "Epic Games" game.epicGames
+                            , viewGameUrl "IGDB" game.igdb
+                            ]
+                ]
     in
     div [ class "game" ] <|
-        values
-            [ Maybe.map (\s -> img [ src s, class "cover" ] []) game.cover
-            , Just <| div [ class "name" ] [ text game.name ]
-            , Maybe.map (\t -> div [ class "description" ] [ text t ]) game.description
-            , Just <|
-                div [ class "urls" ] <|
-                    values
-                        [ viewGameUrl "Official Website" game.url
-                        , viewGameUrl "itch.io" game.itch
-                        , viewGameUrl "Steam" game.steam
-                        , viewGameUrl "GOG" game.gog
-                        , viewGameUrl "Epic Games" game.epicGames
-                        , viewGameUrl "IGDB" game.igdb
-                        ]
-            ]
+        case maybeCover of
+            Just cover ->
+                cover :: info
+
+            Nothing ->
+                info

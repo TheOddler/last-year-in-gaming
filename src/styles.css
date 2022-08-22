@@ -8,38 +8,59 @@ body {
 }
 
 .cover {
-    height: 20em;
+    width: 100%;
 }
 
 .games {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    gap: 1em;
 }
 
 .game {
-    width: 35rem;
-    margin: 0.5em;
+    max-width: 20em;
     border-radius: 1em;
     overflow: hidden;
     background: white;
+
+    display: grid;
+    grid-template-columns: auto;
+    grid-template-rows: auto auto 1fr auto;
+    grid-template-areas: 
+        "cover"
+        "name"
+        "description"
+        "urls";
+    column-gap: 0px;
+    row-gap: 0px;
+    justify-items: stretch;
 }
 
 .game .cover {
-    float: left;
-    margin-right: 0.75em;
+    grid-area: cover;
 }
 
 .game .name {
+    grid-area: name;
+    text-align: center;
     font-weight: bold;
     font-size: 150%;
-    margin: 0.25em 0.5em;
+    margin: 0.5em;
 }
 
 .game .description {
-    margin: 0.25em 0.5em;
+    grid-area: description;
+    text-align: justify;
+    margin: 0 0.5em;
 }
 
-.game .urls .url {
-    margin: 0.25em 0.5em;
+.game .urls {
+    grid-area: urls;
+    margin: 1em;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 1em;
+    font-size: 120%;
 }
