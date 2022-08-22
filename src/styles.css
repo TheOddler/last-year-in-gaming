@@ -1,0 +1,45 @@
+body {
+    background: lightgray;
+}
+
+.title {
+    text-align: center;
+    font-size: 3em;
+}
+
+.cover {
+    height: 20em;
+}
+
+.games {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.game {
+    width: 35rem;
+    margin: 0.5em;
+    border-radius: 1em;
+    overflow: hidden;
+    background: white;
+}
+
+.game .cover {
+    float: left;
+    margin-right: 0.75em;
+}
+
+.game .name {
+    font-weight: bold;
+    font-size: 150%;
+    margin: 0.25em 0.5em;
+}
+
+.game .description {
+    margin: 0.25em 0.5em;
+}
+
+.game .urls .url {
+    margin: 0.25em 0.5em;
+}

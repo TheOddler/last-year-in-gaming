@@ -1,7 +1,7 @@
 module Game exposing (..)
 
-import Html exposing (Html, a, div, img, li, text, ul)
-import Html.Attributes exposing (height, href, src)
+import Html exposing (Html, a, div, img, text)
+import Html.Attributes exposing (class, href, src)
 import Json.Decode exposing (Decoder, nullable, string, succeed)
 import Json.Decode.Pipeline exposing (optional, required)
 import Maybe.Extra exposing (values)
@@ -41,25 +41,24 @@ decoder =
 view : Game -> Html msg
 view game =
     let
-        maybeTextDiv maybeText =
-            Maybe.map (\t -> div [] [ text t ]) maybeText
-
-        maybeLiA label maybeUrl =
-            Maybe.map (\u -> li [] [ a [ href u ] [ text label ] ]) maybeUrl
+        viewGameUrl label maybeUrl =
+            Maybe.map
+                (\u -> a [ href u, class "url" ] [ text label ])
+                maybeUrl
     in
-    div [] <|
+    div [ class "game" ] <|
         values
-            [ Maybe.map (\s -> img [ src s, height 302 ] []) game.cover
-            , Just <| div [] [ text game.name ]
-            , maybeTextDiv game.description
+            [ Maybe.map (\s -> img [ src s, class "cover" ] []) game.cover
+            , Just <| div [ class "name" ] [ text game.name ]
+            , Maybe.map (\t -> div [ class "description" ] [ text t ]) game.description
             , Just <|
-                ul [] <|
+                div [ class "urls" ] <|
                     values
-                        [ maybeLiA game.name game.url
-                        , maybeLiA "itch.io" game.itch
-                        , maybeLiA "Steam" game.steam
-                        , maybeLiA "GOG" game.gog
-                        , maybeLiA "Epic Games" game.epicGames
-                        , maybeLiA "IGDB" game.igdb
+                        [ viewGameUrl game.name game.url
+                        , viewGameUrl "itch.io" game.itch
+                        , viewGameUrl "Steam" game.steam
+                        , viewGameUrl "GOG" game.gog
+                        , viewGameUrl "Epic Games" game.epicGames
+                        , viewGameUrl "IGDB" game.igdb
                         ]
             ]

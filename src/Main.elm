@@ -5,6 +5,7 @@ import Date exposing (Date)
 import DecodeExtra
 import Game exposing (Game)
 import Html exposing (Html, div, h1, text)
+import Html.Attributes exposing (class)
 import Http
 import Json.Decode as Decode
 import Task
@@ -78,11 +79,11 @@ view model =
 
         Done games ->
             div []
-                [ h1 []
+                [ h1 [ class "title" ]
                     [ text <| "Games release exactly one year ago:"
                     ]
                 , div
-                    []
+                    [ class "games" ]
                   <|
                     List.map Game.view games
                 ]
