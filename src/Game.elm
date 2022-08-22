@@ -54,7 +54,7 @@ view game =
             , Just <|
                 div [ class "urls" ] <|
                     values
-                        [ viewGameUrl game.name game.url
+                        [ viewGameUrl "Official Website" game.url
                         , viewGameUrl "itch.io" game.itch
                         , viewGameUrl "Steam" game.steam
                         , viewGameUrl "GOG" game.gog
