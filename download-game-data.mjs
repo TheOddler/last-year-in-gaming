@@ -44,7 +44,7 @@ try {
                 'Client-ID': clientID,
                 'Authorization': `Bearer ${accessToken}`,
             },
-            data: `fields name,first_release_date,summary,url,total_rating,rating,cover.image_id,websites.url,websites.trusted,websites.category; where first_release_date >= ${oneYearAgo.unix()} & first_release_date <= ${oneMonthLater.unix()}; limit ${pageSize}; offset ${pageSize * page}; sort first_release_date asc;`
+            data: `fields name,first_release_date,summary,url,total_rating,rating,cover.image_id,websites.url,websites.category; where first_release_date >= ${oneYearAgo.unix()} & first_release_date <= ${oneMonthLater.unix()}; limit ${pageSize}; offset ${pageSize * page}; sort first_release_date asc;`
         });
         games.push(...gamesResponse.data);
 
@@ -57,8 +57,6 @@ try {
 
     console.log("Mapping data...")
     games = _.map(games, game => {
-
-        game.websites = _.filter(game.websites, website => website.trusted); // Only accept trusted websites
         // Category enum: https://api-docs.igdb.com/#website-enums
         const officialUrl = _.find(game.websites, website => website.category == 1 /*1 = official*/)?.url;
         const steam = _.find(game.websites, website => website.category == 13 /*13 = steam*/)?.url;
