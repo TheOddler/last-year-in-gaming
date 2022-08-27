@@ -36,7 +36,7 @@ init : () -> ( Model, Cmd Msg )
 init _ =
     ( Loading
     , Cmd.batch
-        [ Task.perform SetDate Date.getTodayLastYear
+        [ Task.perform SetDate (Task.map (Date.add Date.Years -1) Date.today)
         ]
     )
 
@@ -47,7 +47,7 @@ update msg _ =
         SetDate date ->
             ( Loading
             , Http.get
-                { url = "data/" ++ Date.toString date ++ ".json"
+                { url = "data/" ++ Date.toIsoString date ++ ".json"
                 , expect = Http.expectString SetGames
                 }
             )
