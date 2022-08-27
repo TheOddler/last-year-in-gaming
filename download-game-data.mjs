@@ -98,7 +98,8 @@ try {
             gog: gog,
             epic_games: epicGames,
             igdb: game.url,
-            release_date: moment(parseInt(game.first_release_date) * 1000).format("YYYY-MM-DD")
+            release_date: moment(parseInt(game.first_release_date) * 1000).format("YYYY-MM-DD"),
+            rating: game.total_rating || game.rating
         };
     });
     console.log("Done mapping data.")
