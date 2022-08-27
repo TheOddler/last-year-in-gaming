@@ -8,8 +8,8 @@ const oneYearAgo = moment().subtract(1, 'years');
 const oneMonthLater = oneYearAgo.clone().add(1, 'months');
 
 // Add grace periods
-oneYearAgo.subtract(3, 'days');
-oneMonthLater.add(3, 'days');
+oneYearAgo.subtract(1, 'weeks');
+oneMonthLater.add(1, 'weeks');
 
 // Log
 console.log(`Downloading games data from ${oneYearAgo.format()} to ${oneMonthLater.format()}`);
@@ -34,6 +34,21 @@ try {
     let games = [];
 
     console.log(`Downloading games...`);
+    const fields = [
+        "name",
+        "first_release_date",
+        "summary",
+        "url",
+        "total_rating",
+        "rating",
+        "cover.image_id",
+        "websites.url",
+        "websites.category",
+    ];
+    const selects = [
+        `first_release_date >= ${oneYearAgo.unix()}`,
+        `first_release_date <= ${oneMonthLater.unix()}`,
+    ];
     while (true) {
         console.log(`...page ${page + 1}...`);
         const gamesResponse = await axios({
@@ -44,7 +59,12 @@ try {
                 'Client-ID': clientID,
                 'Authorization': `Bearer ${accessToken}`,
             },
-            data: `fields name,first_release_date,summary,url,total_rating,rating,cover.image_id,websites.url,websites.category; where first_release_date >= ${oneYearAgo.unix()} & first_release_date <= ${oneMonthLater.unix()}; limit ${pageSize}; offset ${pageSize * page}; sort first_release_date asc;`
+            data:
+                `fields ${fields.join(",")};
+                where ${selects.join(" & ")};
+                limit ${pageSize};
+                offset ${pageSize * page};
+                sort first_release_date asc;`
         });
         games.push(...gamesResponse.data);
 
