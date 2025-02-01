@@ -27,13 +27,13 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: Setup Pages
       id: pages
-      uses: actions/configure-pages@v1
+      uses: actions/configure-pages@v5
     
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: 18 # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
         cache: 'npm'
@@ -47,7 +47,7 @@ jobs:
       run: npm run build
 
     - name: Upload artifact
-      uses: actions/upload-pages-artifact@v1
+      uses: actions/upload-pages-artifact@v3
       with:
         path: ./public
 
@@ -60,4 +60,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
